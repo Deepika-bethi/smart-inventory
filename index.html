@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Smart Inventory - Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>📦 Smart Inventory - User Mode</h1>
+    <a href="{{ url_for('add_item') }}">➕ Add Item</a> |
+    <a href="{{ url_for('purchase') }}">🛒 Customer Mode</a> |
+    <a href="{{ url_for('view_transactions') }}">📄 Transactions</a>
+
+    <h2>⚠️ Low Stock Alerts</h2>
+    {% for item in low_stock %}
+        <p>{{ item.name }} - only {{ item.quantity }} kg left</p>
+    {% else %}
+        <p>No low stock items</p>
+    {% endfor %}
+
+    <h2>📦 Current Inventory</h2>
+    <table>
+        <tr><th>Item</th><th>Quantity (kg)</th><th>Price (₹/kg)</th></tr>
+        {% for item in items %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.price }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
