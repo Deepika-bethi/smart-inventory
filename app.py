@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for
 
 app = Flask(__name__)
 
+# Inventory dictionary to hold item data
 inventory = {}
 transactions = []
 
@@ -15,8 +16,15 @@ def add_item():
         name = request.form['name']
         quantity = float(request.form['quantity'])
         price = float(request.form['price'])
-        inventory[name] = {'quantity': quantity, 'price': price}
+
+        if name in inventory:
+            inventory[name]['quantity'] += quantity
+            inventory[name]['price'] = price  # Update price
+        else:
+            inventory[name] = {'quantity': quantity, 'price': price}
+
         return redirect(url_for('index'))
+
     return render_template('add_items.html')
 
 @app.route('/purchase', methods=['GET', 'POST'])
@@ -24,6 +32,7 @@ def purchase():
     if request.method == 'POST':
         item_name = request.form['item']
         quantity = float(request.form['quantity'])
+
         if item_name in inventory and inventory[item_name]['quantity'] >= quantity:
             inventory[item_name]['quantity'] -= quantity
             transactions.append({
@@ -31,7 +40,8 @@ def purchase():
                 'quantity': quantity,
                 'price': inventory[item_name]['price']
             })
-        return redirect(url_for('index'))
+            return redirect(url_for('index'))
+
     return render_template('purchase.html', items=inventory)
 
 @app.route('/alerts')
@@ -41,7 +51,7 @@ def alerts():
 
 @app.route('/recent_transactions')
 def recent_transactions():
-    return render_template('recent_transactions.html', transactions=transactions)
+    return render_template('transactions.html', transactions=transactions)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=10000)
