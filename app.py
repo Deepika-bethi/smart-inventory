@@ -1,61 +1,68 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'
 
-# Sample in-memory inventory and transaction log
+# Mock data to simulate database (replace with real DB in your app)
 inventory = []
 transactions = []
+alerts_list = []
 
 @app.route('/')
 def index():
-    return render_template('index.html', items=inventory)
+    # Show main dashboard with inventory and alerts summary
+    return render_template('index.html', items=inventory, alerts=alerts_list)
 
-@app.route('/add', methods=['GET', 'POST'])
+@app.route('/add-item', methods=['GET', 'POST'])
 def add_item():
     if request.method == 'POST':
-        name = request.form['name']
-        quantity = float(request.form['quantity'])
-        price = float(request.form['price'])
+        name = request.form.get('name')
+        quantity = request.form.get('quantity')
+        price = request.form.get('price')
 
-        for item in inventory:
-            if item['name'] == name:
-                item['quantity'] += quantity
-                flash(f"{name} updated successfully!", "success")
-                break
-        else:
-            inventory.append({'name': name, 'quantity': quantity, 'price': price})
-            flash(f"{name} added successfully!", "success")
-
+        # Add item to inventory
+        if name and quantity and price:
+            inventory.append({
+                'name': name,
+                'quantity': float(quantity),
+                'price': float(price)
+            })
         return redirect(url_for('index'))
     return render_template('add_items.html')
+
+@app.route('/alerts')
+def alerts():
+    # Simple alert: low stock items (e.g., quantity < 5)
+    alerts_list.clear()
+    for item in inventory:
+        if item['quantity'] < 5:
+            alerts_list.append(f"{item['name']} is low on stock: {item['quantity']} left")
+    return render_template('alerts.html', alerts=alerts_list)
+
+@app.route('/recent-transactions')
+def recent_transactions():
+    # Show recent transactions
+    return render_template('recent_transactions.html', transactions=transactions)
 
 @app.route('/purchase', methods=['GET', 'POST'])
 def purchase():
     if request.method == 'POST':
-        name = request.form['name']
-        qty = float(request.form['quantity'])
+        item_name = request.form.get('item_name')
+        purchase_qty = request.form.get('quantity')
 
-        for item in inventory:
-            if item['name'] == name:
-                if item['quantity'] >= qty:
-                    item['quantity'] -= qty
-                    transactions.append({'name': name, 'quantity': qty, 'price': item['price']})
-                    flash(f"{qty} kg of {name} purchased!", "success")
-                else:
-                    flash(f"Not enough stock for {name}", "danger")
-                break
-        else:
-            flash(f"{name} not found in inventory", "danger")
-
+        # Process purchase and update inventory
+        if item_name and purchase_qty:
+            qty = float(purchase_qty)
+            for item in inventory:
+                if item['name'] == item_name:
+                    if item['quantity'] >= qty:
+                        item['quantity'] -= qty
+                        transactions.append({
+                            'item_name': item_name,
+                            'quantity': qty,
+                        })
+                    break
         return redirect(url_for('index'))
     return render_template('purchase.html', items=inventory)
 
-@app.route('/transactions')
-def recent_transactions():
-    return render_template('transactions.html', transactions=transactions)
-
 if __name__ == '__main__':
-    import os
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=True)
+    app.run(debug=True, host='0.0.0.0', port=10000)
