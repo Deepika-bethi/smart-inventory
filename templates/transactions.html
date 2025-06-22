@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Transactions - Smart Inventory</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>📄 Recent Transactions</h1>
+    <table>
+        <tr><th>Item</th><th>Quantity (kg)</th><th>Total Price (₹)</th></tr>
+        {% for txn in transactions %}
+        <tr>
+            <td>{{ txn.name }}</td>
+            <td>{{ txn.quantity }}</td>
+            <td>{{ txn.total }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <a href="{{ url_for('index') }}">← Back to Home</a>
+</body>
+</html>
