@@ -1,35 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Add Items - Smart Inventory</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <title>Add Item - Smart Inventory</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <header>
-        <h1>Add Items to Inventory</h1>
-        <nav>
-            <a href="{{ url_for('index') }}">Home</a> |
-            <a href="{{ url_for('purchase') }}">Customer Mode</a> |
-            <a href="{{ url_for('transaction_history') }}">Recent Transactions</a>
+    <div class="container">
+        <h1>Add Item</h1>
+        <form method="POST" action="/add">
+            <label for="name">Item Name:</label>
+            <input type="text" name="name" required><br>
 
-        </nav>
-    </header>
+            <label for="quantity">Quantity (kg):</label>
+            <input type="number" step="0.1" name="quantity" required><br>
 
-    <main>
-        <form action="{{ url_for('add_item') }}" method="post">
-            <label for="item_name">Item Name:</label><br />
-            <input type="text" id="item_name" name="item_name" required /><br /><br />
-
-            <label for="quantity">Quantity (kg):</label><br />
-            <input type="number" id="quantity" name="quantity" step="0.01" min="0" required /><br /><br />
-
-            <label for="price">Price per kg (₹):</label><br />
-            <input type="number" id="price" name="price" step="0.01" min="0" required /><br /><br />
+            <label for="price">Price (₹/kg):</label>
+            <input type="number" step="0.01" name="price" required><br>
 
             <button type="submit">Add Item</button>
         </form>
-    </main>
+
+        <br>
+        <a href="{{ url_for('index') }}">← Back to Home</a> |
+        <a href="{{ url_for('purchase') }}">🛒 Customer Mode</a> |
+        <a href="{{ url_for('transaction_history') }}">📒 Recent Transactions</a>
+    </div>
 </body>
 </html>
