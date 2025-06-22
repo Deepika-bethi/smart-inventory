@@ -1,29 +1,40 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Add Item - Smart Inventory</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Items - Smart Inventory</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 </head>
 <body>
-    <div class="container">
-        <h1>Add Item</h1>
-        <form method="POST" action="/add">
+    <header>
+        <h1>Smart Inventory - Add Items</h1>
+        <nav>
+            <a href="{{ url_for('index') }}">🏠 Home</a> |
+            <a href="{{ url_for('purchase') }}">🛒 Customer Mode</a> |
+            <a href="{{ url_for('alerts') }}">⚠️ Alerts</a> |
+            <a href="{{ url_for('recent_transactions') }}">📒 Recent Transactions</a>
+        </nav>
+    </header>
+
+    <main>
+        <form action="{{ url_for('add_item') }}" method="post">
             <label for="name">Item Name:</label>
-            <input type="text" name="name" required><br>
+            <input type="text" id="name" name="name" required />
 
             <label for="quantity">Quantity (kg):</label>
-            <input type="number" step="0.1" name="quantity" required><br>
+            <input type="number" step="0.01" id="quantity" name="quantity" required />
 
             <label for="price">Price (₹/kg):</label>
-            <input type="number" step="0.01" name="price" required><br>
+            <input type="number" step="0.01" id="price" name="price" required />
 
             <button type="submit">Add Item</button>
         </form>
+    </main>
 
-        <br>
-        <a href="{{ url_for('index') }}">← Back to Home</a> |
-        <a href="{{ url_for('purchase') }}">🛒 Customer Mode</a> |
-        <a href="{{ url_for('transaction_history') }}">📒 Recent Transactions</a>
-    </div>
+    <footer>
+        <p>© 2025 Smart Inventory by Deepika</p>
+    </footer>
 </body>
 </html>
