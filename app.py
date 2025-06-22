@@ -1,55 +1,61 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 
 app = Flask(__name__)
+app.secret_key = 'your_secret_key'
 
-inventory = {}
-low_stock = []
+# Sample in-memory inventory and transaction log
+inventory = []
 transactions = []
 
 @app.route('/')
 def index():
-    return render_template('index.html', items=inventory, low_stock=low_stock)
+    return render_template('index.html', items=inventory)
 
 @app.route('/add', methods=['GET', 'POST'])
 def add_item():
     if request.method == 'POST':
-        try:
-            name = request.form['name']
-            quantity = float(request.form['quantity'])
-            price = float(request.form['price'])
+        name = request.form['name']
+        quantity = float(request.form['quantity'])
+        price = float(request.form['price'])
 
-            inventory[name] = {'quantity': quantity, 'price': price}
-            if quantity < 5:
-                if name not in low_stock:
-                    low_stock.append(name)
-        except KeyError as e:
-            return f"Missing form field: {e}", 400
+        for item in inventory:
+            if item['name'] == name:
+                item['quantity'] += quantity
+                flash(f"{name} updated successfully!", "success")
+                break
+        else:
+            inventory.append({'name': name, 'quantity': quantity, 'price': price})
+            flash(f"{name} added successfully!", "success")
 
         return redirect(url_for('index'))
-
     return render_template('add_items.html')
 
 @app.route('/purchase', methods=['GET', 'POST'])
 def purchase():
     if request.method == 'POST':
-        item = request.form['item']
+        name = request.form['name']
         qty = float(request.form['quantity'])
 
-        if item in inventory and inventory[item]['quantity'] >= qty:
-            inventory[item]['quantity'] -= qty
-            cost = qty * inventory[item]['price']
-            transactions.append({'item': item, 'quantity': qty, 'cost': cost})
-
-            if inventory[item]['quantity'] < 5 and item not in low_stock:
-                low_stock.append(item)
+        for item in inventory:
+            if item['name'] == name:
+                if item['quantity'] >= qty:
+                    item['quantity'] -= qty
+                    transactions.append({'name': name, 'quantity': qty, 'price': item['price']})
+                    flash(f"{qty} kg of {name} purchased!", "success")
+                else:
+                    flash(f"Not enough stock for {name}", "danger")
+                break
+        else:
+            flash(f"{name} not found in inventory", "danger")
 
         return redirect(url_for('index'))
-
     return render_template('purchase.html', items=inventory)
 
 @app.route('/transactions')
-def transaction_history():
+def recent_transactions():
     return render_template('transactions.html', transactions=transactions)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    import os
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)
