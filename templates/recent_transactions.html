@@ -20,15 +20,17 @@
             <tr>
                 <th>Item</th>
                 <th>Quantity Purchased (kg)</th>
-                <th>Amount (₹)</th>
+                <th>Price per kg (₹)</th>
+                <th>Total Amount (₹)</th>
             </tr>
         </thead>
         <tbody>
             {% for t in transactions %}
             <tr>
-                <td>{{ t['item'] }}</td>
-                <td>{{ t['quantity'] }}</td>
-                <td>{{ "%.2f"|format(t['quantity'] * t['price']) }}</td>
+                <td>{{ t.item }}</td>
+                <td>{{ t.quantity }}</td>
+                <td>{{ t.price }}</td>
+                <td>{{ "%.2f"|format(t.quantity * t.price) }}</td>
             </tr>
             {% endfor %}
         </tbody>
