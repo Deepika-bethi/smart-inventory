@@ -2,7 +2,6 @@ from flask import Flask, render_template, request, redirect, url_for
 
 app = Flask(__name__)
 
-# Inventory dictionary to hold item data
 inventory = {}
 transactions = []
 
@@ -19,7 +18,7 @@ def add_item():
 
         if name in inventory:
             inventory[name]['quantity'] += quantity
-            inventory[name]['price'] = price  # Update price
+            inventory[name]['price'] = price
         else:
             inventory[name] = {'quantity': quantity, 'price': price}
 
@@ -35,23 +34,28 @@ def purchase():
 
         if item_name in inventory and inventory[item_name]['quantity'] >= quantity:
             inventory[item_name]['quantity'] -= quantity
+            price = inventory[item_name]['price']
             transactions.append({
                 'item': item_name,
                 'quantity': quantity,
-                'price': inventory[item_name]['price']
+                'price': price,
+                'amount': quantity * price
             })
-            return redirect(url_for('index'))
+
+        return redirect(url_for('index'))
 
     return render_template('purchase.html', items=inventory)
 
 @app.route('/alerts')
 def alerts():
-    low_stock_items = {name: data for name, data in inventory.items() if data['quantity'] < 5}
+    low_stock_items = {item: data for item, data in inventory.items() if data['quantity'] <= 5}
     return render_template('alerts.html', low_stock=low_stock_items)
 
 @app.route('/recent_transactions')
 def recent_transactions():
-    return render_template('transactions.html', transactions=transactions)
+    return render_template('recent_transactions.html', transactions=transactions)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=10000)
+    import os
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port, debug=True)
