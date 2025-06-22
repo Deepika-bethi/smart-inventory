@@ -2,16 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Smart Inventory - Home</title>
-    <link rel="stylesheet" href="../static/style.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 </head>
 <body>
-    <h1>Welcome to Smart Inventory</h1>
+    <h1>Smart Inventory</h1>
+    <nav>
+        <a href="{{ url_for('add_item') }}">➕ Add Item</a> |
+        <a href="{{ url_for('purchase') }}">🛒 Customer Mode</a> |
+        <a href="{{ url_for('alerts') }}">⚠️ Alerts</a> |
+        <a href="{{ url_for('recent_transactions') }}">📒 Recent Transactions</a>
+    </nav>
 
     <h2>Current Inventory</h2>
     {% if items %}
-    <table border="1" cellpadding="5" cellspacing="0">
+    <table>
         <thead>
             <tr>
                 <th>Item</th>
@@ -30,20 +35,7 @@
         </tbody>
     </table>
     {% else %}
-    <p>No items in inventory.</p>
+    <p>No items in inventory yet.</p>
     {% endif %}
-
-    <h2>Low Stock Alerts</h2>
-    {% if low_stock %}
-        <ul>
-            {% for alert in low_stock %}
-                <li>{{ alert.name }} - only {{ alert.quantity }} kg left</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No low stock alerts.</p>
-    {% endif %}
-
-    <p><a href="/add">Add New Item</a> | <a href="/purchase">Purchase Items</a></p>
 </body>
 </html>
