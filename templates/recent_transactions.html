@@ -26,9 +26,9 @@
         <tbody>
             {% for t in transactions %}
             <tr>
-                <td>{{ t.item }}</td>
-                <td>{{ t.quantity }}</td>
-                <td>{{ "%.2f"|format(t.quantity * t.price) }}</td>
+                <td>{{ t['item'] }}</td>
+                <td>{{ t['quantity'] }}</td>
+                <td>{{ "%.2f"|format(t['quantity'] * t['price']) }}</td>
             </tr>
             {% endfor %}
         </tbody>
