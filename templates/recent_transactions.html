@@ -1,15 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
     <title>Recent Transactions</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
-        <h1>📄 Recent Transactions</h1>
-        <a href="{{ url_for('index') }}">🔙 Back to Home</a>
-
+        <h1>📃 Recent Transactions</h1>
         {% if transactions %}
             <table>
                 <thead>
@@ -22,12 +19,12 @@
                 </thead>
                 <tbody>
                     {% for t in transactions %}
-                        <tr>
-                            <td>{{ t.name or t['name'] }}</td>
-                            <td>{{ t.quantity or t['quantity'] }}</td>
-                            <td>{{ t.price or t['price'] }}</td>
-                            <td>{{ t.total or (t['price'] * t['quantity']) }}</td>
-                        </tr>
+                    <tr>
+                        <td>{{ t['name'] }}</td>
+                        <td>{{ t['quantity'] }}</td>
+                        <td>{{ t['price'] }}</td>
+                        <td>{{ t['total'] }}</td>
+                    </tr>
                     {% endfor %}
                 </tbody>
             </table>
