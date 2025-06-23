@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
+import os
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -46,13 +47,14 @@ def purchase():
                 if item['quantity'] >= purchase_quantity:
                     item['quantity'] -= purchase_quantity
                     total = purchase_quantity * item['price']
-                    
+
                     transactions.append({
                         'name': name,
                         'quantity': purchase_quantity,
                         'price': item['price'],
                         'total': total
                     })
+
                     flash(f"Purchased {purchase_quantity} kg of {name} for ₹{total}.", "success")
                 else:
                     flash(f"Not enough {name} in stock!", "danger")
@@ -69,6 +71,7 @@ def purchase():
 def recent_transactions():
     return render_template('recent_transactions.html', transactions=transactions)
 
-# Run the app
+# Run the app (Port binding for Render)
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
