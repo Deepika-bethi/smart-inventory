@@ -1,40 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <title>Recent Transactions - Smart Inventory</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <meta charset="UTF-8">
+    <title>Recent Transactions</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Recent Transactions</h1>
-    <nav>
-        <a href="{{ url_for('index') }}">🏠 Home</a> |
-        <a href="{{ url_for('add_item') }}">➕ Add Item</a> |
-        <a href="{{ url_for('purchase') }}">🛒 Customer Mode</a> |
-        <a href="{{ url_for('alerts') }}">⚠️ Alerts</a>
-    </nav>
+    <div class="container">
+        <h1>📄 Recent Transactions</h1>
+        <a href="{{ url_for('index') }}">🔙 Back to Home</a>
 
-    {% if transactions %}
-    <table>
-        <thead>
-            <tr>
-                <th>Item</th>
-                <th>Quantity Purchased (kg)</th>
-                <th>Amount (₹)</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for t in transactions %}
-            <tr>
-                <td>{{ t.item }}</td>
-                <td>{{ t.quantity }}</td>
-                <td>{{ "%.2f"|format(t.quantity * t.price) }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-        <p>No transactions yet.</p>
-    {% endif %}
+        {% if transactions %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Quantity (kg)</th>
+                        <th>Price (₹/kg)</th>
+                        <th>Total (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in transactions %}
+                        <tr>
+                            <td>{{ t.name or t['name'] }}</td>
+                            <td>{{ t.quantity or t['quantity'] }}</td>
+                            <td>{{ t.price or t['price'] }}</td>
+                            <td>{{ t.total or (t['price'] * t['quantity']) }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No transactions yet.</p>
+        {% endif %}
+    </div>
 </body>
 </html>
