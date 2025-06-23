@@ -1,36 +1,34 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Inventory</title>
+    <meta charset="UTF-8">
+    <title>Current Inventory</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h2>📦 Current Inventory</h2>
+    <h1>📦 Current Inventory</h1>
 
-        {% if items %}
-            <table>
-                <tr>
-                    <th>Item</th>
-                    <th>Quantity (kg)</th>
-                    <th>Price (₹/kg)</th>
-                    <th>Action</th>
-                </tr>
-                {% for item in items %}
-                <tr>
-                    <td>{{ item[1] }}</td>
-                    <td>{{ item[2] }}</td>
-                    <td>{{ item[3] }}</td>
-                    <td><a href="{{ url_for('edit_item', item_id=item[0]) }}">✏️ Edit</a></td>
-                </tr>
-                {% endfor %}
-            </table>
-        {% else %}
-            <p>No items in inventory.</p>
-        {% endif %}
+    <table>
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Quantity (kg)</th>
+                <th>Price (₹/kg)</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.price }}</td>
+                <td><a href="{{ url_for('edit_item', item_id=item.id) }}">✏️ Edit</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
-        <br>
-        <a href="{{ url_for('index') }}">← Back to Home</a>
-    </div>
+    <a class="back-button" href="{{ url_for('home') }}">← Back to Home</a>
 </body>
 </html>
