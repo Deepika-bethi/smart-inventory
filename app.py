@@ -4,25 +4,23 @@ import os
 
 app = Flask(__name__)
 
-# ✅ Auto-create DB and tables if not found (for Render)
+# Initialize DB
 def init_db():
     conn = sqlite3.connect('inventory.db')
     c = conn.cursor()
     c.execute('''
-        CREATE TABLE IF NOT EXISTS items (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            quantity REAL NOT NULL,
-            price REAL NOT NULL
+        CREATE TABLE IF NOT EXISTS inventory (
+            name TEXT PRIMARY KEY,
+            quantity REAL,
+            price REAL
         )
     ''')
     c.execute('''
         CREATE TABLE IF NOT EXISTS transactions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            quantity REAL NOT NULL,
-            price REAL NOT NULL,
-            total REAL NOT NULL
+            name TEXT,
+            quantity REAL,
+            price REAL,
+            total REAL
         )
     ''')
     conn.commit()
@@ -30,17 +28,15 @@ def init_db():
 
 init_db()
 
-# ✅ Home with navigation buttons
 @app.route('/')
-def index():
+def home():
     return render_template('index.html')
 
-# ✅ Add item page
-@app.route('/add-item')
+@app.route('/add')
 def add_item_page():
     return render_template('add_item.html')
 
-@app.route('/add', methods=['POST'])
+@app.route('/add_item', methods=['POST'])
 def add_item():
     name = request.form['name']
     quantity = float(request.form['quantity'])
@@ -48,91 +44,87 @@ def add_item():
 
     conn = sqlite3.connect('inventory.db')
     c = conn.cursor()
-    c.execute('INSERT INTO items (name, quantity, price) VALUES (?, ?, ?)', (name, quantity, price))
+    c.execute('INSERT OR REPLACE INTO inventory (name, quantity, price) VALUES (?, ?, ?)', (name, quantity, price))
     conn.commit()
     conn.close()
     return redirect(url_for('inventory_page'))
 
-# ✅ Purchase page
-@app.route('/purchase-item')
+@app.route('/purchase')
 def purchase_item_page():
-    return render_template('purchase_item.html')
+    conn = sqlite3.connect('inventory.db')
+    c = conn.cursor()
+    c.execute('SELECT * FROM inventory')
+    items = c.fetchall()
+    conn.close()
+    return render_template('purchase_item.html', items=items)
 
-@app.route('/purchase', methods=['POST'])
-def purchase():
+@app.route('/purchase_item', methods=['POST'])
+def purchase_item():
     name = request.form['name']
     quantity = float(request.form['quantity'])
 
     conn = sqlite3.connect('inventory.db')
     c = conn.cursor()
-    c.execute('SELECT quantity, price FROM items WHERE name = ?', (name,))
-    result = c.fetchone()
+    c.execute('SELECT quantity, price FROM inventory WHERE name = ?', (name,))
+    item = c.fetchone()
 
-    if result:
-        current_quantity, price = result
-        if quantity <= current_quantity:
-            new_quantity = current_quantity - quantity
-            c.execute('UPDATE items SET quantity = ? WHERE name = ?', (new_quantity, name))
-            total = quantity * price
-            c.execute('INSERT INTO transactions (name, quantity, price, total) VALUES (?, ?, ?, ?)',
-                      (name, quantity, price, total))
-            conn.commit()
-
+    if item and item[0] >= quantity:
+        new_quantity = item[0] - quantity
+        total = quantity * item[1]
+        c.execute('UPDATE inventory SET quantity = ? WHERE name = ?', (new_quantity, name))
+        c.execute('INSERT INTO transactions (name, quantity, price, total) VALUES (?, ?, ?, ?)', (name, quantity, item[1], total))
+        conn.commit()
     conn.close()
     return redirect(url_for('inventory_page'))
 
-# ✅ Alerts page
 @app.route('/alerts')
 def low_stock_alerts():
     conn = sqlite3.connect('inventory.db')
     c = conn.cursor()
-    c.execute('SELECT * FROM items WHERE quantity < 5')
+    c.execute('SELECT name, quantity FROM inventory WHERE quantity < 5')
     alerts = c.fetchall()
     conn.close()
     return render_template('alerts.html', alerts=alerts)
 
-# ✅ Inventory page
 @app.route('/inventory')
 def inventory_page():
     conn = sqlite3.connect('inventory.db')
     c = conn.cursor()
-    c.execute('SELECT * FROM items')
+    c.execute('SELECT * FROM inventory')
     items = c.fetchall()
     conn.close()
     return render_template('inventory.html', items=items)
 
-# ✅ Edit item page
-@app.route('/edit/<int:item_id>', methods=['GET', 'POST'])
-def edit_item(item_id):
+@app.route('/edit/<name>')
+def edit_item(name):
     conn = sqlite3.connect('inventory.db')
     c = conn.cursor()
+    c.execute('SELECT * FROM inventory WHERE name = ?', (name,))
+    item = c.fetchone()
+    conn.close()
+    return render_template('edit_item.html', item=item)
 
-    if request.method == 'POST':
-        new_name = request.form['name']
-        new_quantity = float(request.form['quantity'])
-        new_price = float(request.form['price'])
-        c.execute('UPDATE items SET name=?, quantity=?, price=? WHERE id=?',
-                  (new_name, new_quantity, new_price, item_id))
-        conn.commit()
-        conn.close()
-        return redirect(url_for('inventory_page'))
-    else:
-        c.execute('SELECT * FROM items WHERE id=?', (item_id,))
-        item = c.fetchone()
-        conn.close()
-        return render_template('edit_item.html', item=item)
+@app.route('/update_item/<name>', methods=['POST'])
+def update_item(name):
+    quantity = float(request.form['quantity'])
+    price = float(request.form['price'])
 
-# ✅ Transactions page
+    conn = sqlite3.connect('inventory.db')
+    c = conn.cursor()
+    c.execute('UPDATE inventory SET quantity = ?, price = ? WHERE name = ?', (quantity, price, name))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('inventory_page'))
+
 @app.route('/transactions')
 def show_transactions():
     conn = sqlite3.connect('inventory.db')
+    conn.row_factory = sqlite3.Row  # ✅ allow dict-like access
     c = conn.cursor()
     c.execute('SELECT * FROM transactions')
     transactions = c.fetchall()
     conn.close()
     return render_template('recent_transactions.html', transactions=transactions)
 
-# ✅ Port setup for Render
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))
-    app.run(debug=True, host='0.0.0.0', port=port)
+    app.run(debug=True)
