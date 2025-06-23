@@ -1,0 +1,15 @@
+# Ignore SQLite DB
+inventory.db
+
+# Ignore Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore environment files
+.env
+.venv/
+
+# Ignore VSCode settings (optional)
+.vscode/
