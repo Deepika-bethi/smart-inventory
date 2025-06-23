@@ -1,23 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
     <title>Add Item</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
-        <h1>➕ Add Item</h1>
-        <a href="{{ url_for('index') }}">🔙 Back to Home</a>
-        <form method="POST">
-            <label>Item Name:</label>
-            <input type="text" name="name" required><br>
-            <label>Quantity (kg):</label>
-            <input type="number" step="0.01" name="quantity" required><br>
-            <label>Price (₹/kg):</label>
-            <input type="number" step="0.01" name="price" required><br>
+        <h2>Add Item</h2>
+        <form action="{{ url_for('add_item') }}" method="POST">
+            <label for="name">Item Name:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="quantity">Quantity (kg):</label>
+            <input type="number" id="quantity" name="quantity" step="0.01" required>
+
+            <label for="price">Price (₹/kg):</label>
+            <input type="number" id="price" name="price" step="0.01" required>
+
             <button type="submit">Add Item</button>
         </form>
+        <br>
+        <a href="{{ url_for('index') }}">← Back to Home</a>
     </div>
 </body>
 </html>
