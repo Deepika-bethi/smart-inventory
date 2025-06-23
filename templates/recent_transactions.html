@@ -1,36 +1,40 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Recent Transactions</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h1>📃 Recent Transactions</h1>
-        {% if transactions %}
-            <table>
-                <thead>
-                    <tr>
-                        <th>Item</th>
-                        <th>Quantity (kg)</th>
-                        <th>Price (₹/kg)</th>
-                        <th>Total (₹)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for t in transactions %}
-                    <tr>
-                        <td>{{ t['name'] }}</td>
-                        <td>{{ t['quantity'] }}</td>
-                        <td>{{ t['price'] }}</td>
-                        <td>{{ t['total'] }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p>No transactions yet.</p>
-        {% endif %}
-    </div>
+    <h1>📄 Recent Transactions</h1>
+
+    {% if transactions %}
+    <table>
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Price per kg (₹)</th>
+                <th>Total (₹)</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in transactions %}
+            <tr>
+                <td>{{ t.name }}</td>
+                <td>{{ t.quantity }}</td>
+                <td>{{ t.price }}</td>
+                <td>{{ "%.2f"|format(t.quantity * t.price) }}</td>
+                <td>{{ t.timestamp }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p>No transactions yet.</p>
+    {% endif %}
+
+    <a class="back-button" href="{{ url_for('home') }}">← Back to Home</a>
 </body>
 </html>
