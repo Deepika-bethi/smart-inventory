@@ -1,27 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8" />
-    <title>Alerts - Smart Inventory</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <title>Low Stock Alerts</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Low Stock Alerts</h1>
-    <nav>
-        <a href="{{ url_for('index') }}">🏠 Home</a> |
-        <a href="{{ url_for('add_item') }}">➕ Add Item</a> |
-        <a href="{{ url_for('purchase') }}">🛒 Customer Mode</a> |
-        <a href="{{ url_for('recent_transactions') }}">📒 Recent Transactions</a>
-    </nav>
+    <div class="container">
+        <h2>⚠️ Low Stock Alerts</h2>
 
-    {% if low_stock %}
-        <ul>
-        {% for item in low_stock %}
-            <li>{{ item.name }} - only {{ item.quantity }} kg left</li>
-        {% endfor %}
-        </ul>
-    {% else %}
-        <p>No low stock items.</p>
-    {% endif %}
+        {% if alerts %}
+            <ul>
+                {% for item in alerts %}
+                    <li>{{ item[1] }} - only {{ item[2] }} kg left</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>All items have sufficient stock ✅</p>
+        {% endif %}
+
+        <br>
+        <a href="{{ url_for('index') }}">← Back to Home</a>
+    </div>
 </body>
 </html>
