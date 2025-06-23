@@ -1,41 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <title>Smart Inventory - Home</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <meta charset="UTF-8">
+    <title>Smart Inventory - User Mode</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Smart Inventory</h1>
-    <nav>
-        <a href="{{ url_for('add_item') }}">➕ Add Item</a> |
-        <a href="{{ url_for('purchase') }}">🛒 Customer Mode</a> |
-        <a href="{{ url_for('alerts') }}">⚠️ Alerts</a> |
-        <a href="{{ url_for('recent_transactions') }}">📒 Recent Transactions</a>
-    </nav>
+    <div class="container">
+        <h1>📦 Smart Inventory - User Mode</h1>
+        <div class="nav-buttons">
+            <a href="{{ url_for('add_item') }}">➕ Add Item</a>
+            <a href="{{ url_for('purchase') }}">🛒 Customer Mode</a>
+            <a href="{{ url_for('recent_transactions') }}">📄 Recent Transactions</a>
+        </div>
 
-    <h2>Current Inventory</h2>
-    {% if items %}
-    <table>
-        <thead>
-            <tr>
-                <th>Item</th>
-                <th>Quantity (kg)</th>
-                <th>Price (₹/kg)</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in items %}
-            <tr>
-                <td>{{ item.name }}</td>
-                <td>{{ item.quantity }}</td>
-                <td>{{ item.price }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-    <p>No items in inventory yet.</p>
-    {% endif %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <ul class="flashes">
+              {% for category, message in messages %}
+                <li class="flash {{ category }}">{{ message }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+
+        <h2>📊 Current Inventory</h2>
+        {% if items %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Quantity (kg)</th>
+                    <th>Price (₹/kg)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>{{ item.name or item['name'] }}</td>
+                    <td>{{ item.quantity or item['quantity'] }}</td>
+                    <td>{{ item.price or item['price'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p>No items in inventory.</p>
+        {% endif %}
+    </div>
 </body>
 </html>
