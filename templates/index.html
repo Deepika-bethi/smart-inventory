@@ -1,18 +1,20 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Smart Inventory - User Mode</title>
+    <meta charset="UTF-8">
+    <title>Smart Inventory - Home</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
         <h1>Smart Inventory - User Mode</h1>
-        <div class="card-buttons">
-            <a class="card-button" href="{{ url_for('add_item_page') }}">➕ Add Item</a>
-            <a class="card-button" href="{{ url_for('purchase_item_page') }}">🛒 Customer Mode</a>
-            <a class="card-button" href="{{ url_for('low_stock_alerts') }}">⚠️ Alerts</a>
-            <a class="card-button" href="{{ url_for('inventory_page') }}">📦 Current Inventory</a>
-            <a class="card-button" href="{{ url_for('show_transactions') }}">📃 Transactions</a>
+
+        <div class="card-container">
+            <a href="{{ url_for('add_item') }}" class="card">➕ Add Item</a>
+            <a href="{{ url_for('customer_mode') }}" class="card">🛒 Customer Mode</a>
+            <a href="{{ url_for('alerts') }}" class="card">⚠️ Alerts</a>
+            <a href="{{ url_for('inventory_page') }}" class="card">📦 Current Inventory</a>
+            <a href="{{ url_for('show_transactions') }}" class="card">📄 Transactions</a>
         </div>
     </div>
 </body>
