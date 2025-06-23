@@ -5,14 +5,17 @@ from datetime import datetime
 app = Flask(__name__)
 
 def get_db_connection():
-    conn = sqlite3.connect('inventory.db')
+    conn = sqlite3.connect('inventory.db', check_same_thread=False)
     conn.row_factory = sqlite3.Row
     return conn
 
 @app.route('/')
 def index():
     conn = get_db_connection()
-    items = conn.execute('SELECT * FROM items').fetchall()
+    try:
+        items = conn.execute('SELECT * FROM items').fetchall()
+    except sqlite3.OperationalError:
+        items = []
     conn.close()
     return render_template('index.html', items=items)
 
@@ -34,7 +37,12 @@ def add_item():
 @app.route('/purchase', methods=['GET', 'POST'])
 def purchase():
     conn = get_db_connection()
-    items = conn.execute('SELECT * FROM items').fetchall()
+    try:
+        items = conn.execute('SELECT * FROM items').fetchall()
+    except sqlite3.OperationalError:
+        items = []
+        conn.close()
+        return render_template('purchase.html', items=items)
 
     if request.method == 'POST':
         item_id = int(request.form['item_id'])
@@ -62,14 +70,20 @@ def purchase():
 @app.route('/alerts')
 def alerts():
     conn = get_db_connection()
-    alerts = conn.execute('SELECT * FROM items WHERE quantity <= 3').fetchall()
+    try:
+        alerts = conn.execute('SELECT * FROM items WHERE quantity <= 3').fetchall()
+    except sqlite3.OperationalError:
+        alerts = []
     conn.close()
     return render_template('alerts.html', alerts=alerts)
 
 @app.route('/transactions')
 def transactions():
     conn = get_db_connection()
-    transactions = conn.execute('SELECT * FROM transactions ORDER BY timestamp DESC').fetchall()
+    try:
+        transactions = conn.execute('SELECT * FROM transactions ORDER BY timestamp DESC').fetchall()
+    except sqlite3.OperationalError:
+        transactions = []
     conn.close()
     return render_template('recent_transactions.html', transactions=transactions)
 
@@ -92,7 +106,7 @@ def edit_item(item_id):
     conn.close()
     return render_template('edit_item.html', item=item)
 
-# ✅ TEMPORARY DB SETUP ROUTE
+# ✅ FINAL SAFE /create-db route
 @app.route('/create-db')
 def create_db():
     conn = get_db_connection()
