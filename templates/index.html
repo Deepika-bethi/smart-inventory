@@ -6,22 +6,13 @@
 </head>
 <body>
     <h1>Smart Inventory - User Mode</h1>
-    <div class="card-container">
-        <a href="{{ url_for('add_item') }}" class="card">Add Item</a>
-        <a href="{{ url_for('purchase') }}" class="card">Customer Mode</a>
-        <a href="{{ url_for('index') }}" class="card">Current Inventory</a>
-        <a href="{{ url_for('transactions') }}" class="card">Transactions</a>
+
+    <div class="vertical-menu">
+        <a href="{{ url_for('add_item') }}" class="menu-button add">Add Item</a>
+        <a href="{{ url_for('purchase') }}" class="menu-button customer">Customer Mode</a>
+        <a href="#" class="menu-button alerts">Alerts</a>
+        <a href="{{ url_for('index') }}" class="menu-button inventory">Current Inventory</a>
+        <a href="{{ url_for('transactions') }}" class="menu-button transactions">Transactions</a>
     </div>
-    <h2>Current Inventory</h2>
-    <table>
-        <tr><th>Item</th><th>Quantity</th><th>Price</th></tr>
-        {% for item in items %}
-        <tr>
-            <td>{{ item.name }}</td>
-            <td>{{ item.quantity }}</td>
-            <td>{{ item.price }}</td>
-        </tr>
-        {% endfor %}
-    </table>
 </body>
 </html>
