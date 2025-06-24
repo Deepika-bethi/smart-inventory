@@ -1,9 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 import sqlite3
-import os
 
 app = Flask(__name__)
-
 DB_FILE = 'inventory.db'
 
 def get_db_connection():
@@ -14,7 +12,6 @@ def get_db_connection():
 def initialize_database():
     conn = get_db_connection()
     cur = conn.cursor()
-    # Create items table if it doesn't exist
     cur.execute('''
         CREATE TABLE IF NOT EXISTS items (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -23,7 +20,6 @@ def initialize_database():
             price REAL NOT NULL
         )
     ''')
-    # Create transactions table if it doesn't exist
     cur.execute('''
         CREATE TABLE IF NOT EXISTS transactions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -36,7 +32,6 @@ def initialize_database():
     conn.commit()
     conn.close()
 
-# Initialize DB once when the app starts
 initialize_database()
 
 @app.route('/')
@@ -46,7 +41,42 @@ def index():
     conn.close()
     return render_template('index.html', items=items)
 
-# You can keep other routes here like /add, /purchase, etc.
+@app.route('/add', methods=['GET', 'POST'])
+def add_item():
+    if request.method == 'POST':
+        name = request.form['name']
+        quantity = float(request.form['quantity'])
+        price = float(request.form['price'])
+        conn = get_db_connection()
+        conn.execute('INSERT INTO items (name, quantity, price) VALUES (?, ?, ?)', (name, quantity, price))
+        conn.commit()
+        conn.close()
+        return redirect(url_for('index'))
+    return render_template('add_items.html')
 
-if __name__ == '__main__':
-    app.run(debug=True)
+@app.route('/purchase', methods=['GET', 'POST'])
+def purchase():
+    conn = get_db_connection()
+    items = conn.execute('SELECT * FROM items').fetchall()
+    if request.method == 'POST':
+        item_id = int(request.form['item_id'])
+        quantity = float(request.form['quantity'])
+        item = conn.execute('SELECT * FROM items WHERE id = ?', (item_id,)).fetchone()
+        if item and item['quantity'] >= quantity:
+            new_quantity = item['quantity'] - quantity
+            total = quantity * item['price']
+            conn.execute('UPDATE items SET quantity = ? WHERE id = ?', (new_quantity, item_id))
+            conn.execute('INSERT INTO transactions (item_name, quantity, price, total) VALUES (?, ?, ?, ?)',
+                         (item['name'], quantity, item['price'], total))
+            conn.commit()
+        conn.close()
+        return redirect(url_for('index'))
+    conn.close()
+    return render_template('purchase.html', items=items)
+
+@app.route('/transactions')
+def transactions():
+    conn = get_db_connection()
+    transactions = conn.execute('SELECT * FROM transactions').fetchall()
+    conn.close()
+    return render_template('recent_transactions.html', transactions=transactions)
