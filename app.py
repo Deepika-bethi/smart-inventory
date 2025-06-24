@@ -101,3 +101,10 @@ def edit_item(item_id):
         return render_template('edit_item.html', item=item, message="Item updated.")
     conn.close()
     return render_template('edit_item.html', item=item)
+@app.route('/inventory')
+def inventory():
+    conn = get_db_connection()
+    items = conn.execute('SELECT * FROM items').fetchall()
+    conn.close()
+    return render_template('current_inventory.html', items=items)
+
