@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Current Inventory</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Current Inventory</h1>
+    <div class="form-card wide-card">
+        <table class="fixed-table">
+            <tr><th>Item</th><th>Quantity</th><th>Price</th><th>Stock</th><th>Action</th></tr>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.price }}</td>
+                <td>
+                    {% if item.quantity < 5 %}
+                        <span style="color:red;">Low Stock</span>
+                    {% else %}
+                        In Stock
+                    {% endif %}
+                </td>
+                <td><a href="{{ url_for('edit_item', item_id=item.id) }}">✏️ Edit</a></td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <a href="{{ url_for('index') }}">Back to Home</a>
+</body>
+</html>
