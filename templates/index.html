@@ -10,30 +10,8 @@
         <a href="{{ url_for('add_item') }}" class="menu-box">Add Item</a>
         <a href="{{ url_for('purchase') }}" class="menu-box">Customer Mode</a>
         <a href="{{ url_for('alerts') }}" class="menu-box">Alerts</a>
-        <a href="{{ url_for('index') }}" class="menu-box">Current Inventory</a>
+        <a href="{{ url_for('inventory') }}" class="menu-box">Current Inventory</a>
         <a href="{{ url_for('transactions') }}" class="menu-box">Transactions</a>
-    </div>
-
-    <h2>Current Inventory</h2>
-    <div class="table-container">
-        <table>
-            <tr><th>Item</th><th>Quantity</th><th>Price</th><th>Stock</th><th>Action</th></tr>
-            {% for item in items %}
-            <tr>
-                <td>{{ item.name }}</td>
-                <td>{{ item.quantity }}</td>
-                <td>{{ item.price }}</td>
-                <td>
-                    {% if item.quantity < 5 %}
-                        <span style="color:red;">Low Stock</span>
-                    {% else %}
-                        In Stock
-                    {% endif %}
-                </td>
-                <td><a href="{{ url_for('edit_item', item_id=item.id) }}">✏️ Edit</a></td>
-            </tr>
-            {% endfor %}
-        </table>
     </div>
 </body>
 </html>
