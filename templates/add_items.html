@@ -8,7 +8,7 @@
     <h1>Add New Item</h1>
     <div class="form-card">
         {% if message %}
-            <p style="color: green;">{{ message }}</p>
+            <p class="success-msg">{{ message }}</p>
         {% endif %}
         <form method="POST">
             <label>Item Name:</label>
@@ -20,7 +20,6 @@
             <button type="submit">Add Item</button>
         </form>
     </div>
-    <br>
     <a href="{{ url_for('index') }}">Back to Home</a>
 </body>
 </html>
