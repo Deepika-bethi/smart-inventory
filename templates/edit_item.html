@@ -7,6 +7,9 @@
 <body>
     <h1>Edit Item</h1>
     <div class="form-card">
+        {% if message %}
+            <p class="success-msg">{{ message }}</p>
+        {% endif %}
         <form method="POST">
             <label>Quantity (kg):</label>
             <input type="number" name="quantity" step="0.01" value="{{ item.quantity }}" required><br>
