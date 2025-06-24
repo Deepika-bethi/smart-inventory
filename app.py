@@ -51,7 +51,8 @@ def add_item():
         conn.execute('INSERT INTO items (name, quantity, price) VALUES (?, ?, ?)', (name, quantity, price))
         conn.commit()
         conn.close()
-        return redirect(url_for('index'))
+        # Don't redirect — stay on the same page
+        return render_template('add_items.html', message="Item added successfully.")
     return render_template('add_items.html')
 
 @app.route('/purchase', methods=['GET', 'POST'])
