@@ -1,23 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
     <title>Smart Inventory - Home</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h1>Smart Inventory - User Mode</h1>
-
-        <div class="card-container">
-            <a href="{{ url_for('add_item') }}" class="card">➕ Add Item</a>
-            <a href="{{ url_for('purchase') }}" class="card">🛒 Customer Mode</a>
-
-            <a href="{{ url_for('alerts') }}" class="card">⚠️ Alerts</a>
-            <a href="{{ url_for('index') }}" class="card">📦 Current Inventory</a>
-
-            <a href="{{ url_for('show_transactions') }}" class="card">📄 Transactions</a>
-        </div>
+    <h1>Smart Inventory - User Mode</h1>
+    <div class="card-container">
+        <a href="{{ url_for('add_item') }}" class="card">Add Item</a>
+        <a href="{{ url_for('purchase') }}" class="card">Customer Mode</a>
+        <a href="{{ url_for('index') }}" class="card">Current Inventory</a>
+        <a href="{{ url_for('transactions') }}" class="card">Transactions</a>
     </div>
+    <h2>Current Inventory</h2>
+    <table>
+        <tr><th>Item</th><th>Quantity</th><th>Price</th></tr>
+        {% for item in items %}
+        <tr>
+            <td>{{ item.name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.price }}</td>
+        </tr>
+        {% endfor %}
+    </table>
 </body>
 </html>
