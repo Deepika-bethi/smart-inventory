@@ -6,13 +6,12 @@
 </head>
 <body>
     <h1>Smart Inventory - User Mode</h1>
-
     <div class="vertical-menu">
-        <a href="{{ url_for('add_item') }}" class="menu-button add">Add Item</a>
-        <a href="{{ url_for('purchase') }}" class="menu-button customer">Customer Mode</a>
-        <a href="#" class="menu-button alerts">Alerts</a>
-        <a href="{{ url_for('index') }}" class="menu-button inventory">Current Inventory</a>
-        <a href="{{ url_for('transactions') }}" class="menu-button transactions">Transactions</a>
+        <a href="{{ url_for('add_item') }}" class="menu-box">Add Item</a>
+        <a href="{{ url_for('purchase') }}" class="menu-box">Customer Mode</a>
+        <a href="#" class="menu-box">Alerts</a>
+        <a href="{{ url_for('index') }}" class="menu-box">Current Inventory</a>
+        <a href="{{ url_for('transactions') }}" class="menu-box">Transactions</a>
     </div>
 </body>
 </html>
