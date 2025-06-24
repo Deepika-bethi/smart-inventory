@@ -1,23 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
     <title>Low Stock Alerts</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>⚠️ Low Stock Alerts</h1>
-
-    {% if alerts %}
-    <ul>
-        {% for item in alerts %}
-        <li>{{ item.name }} - only {{ item.quantity }} kg left</li>
-        {% endfor %}
-    </ul>
-    {% else %}
-        <p>No low stock alerts. All items are sufficient.</p>
-    {% endif %}
-
-    <a class="back-button" href="{{ url_for('home') }}">← Back to Home</a>
+    <h1>Low Stock Alerts</h1>
+    <div class="table-container">
+        <table>
+            <tr><th>Item</th><th>Quantity</th></tr>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.quantity }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <a href="{{ url_for('index') }}">Back to Home</a>
 </body>
 </html>
