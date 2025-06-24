@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request
 import sqlite3
 
 app = Flask(__name__)
@@ -51,7 +51,6 @@ def add_item():
         conn.execute('INSERT INTO items (name, quantity, price) VALUES (?, ?, ?)', (name, quantity, price))
         conn.commit()
         conn.close()
-        # Don't redirect — stay on the same page
         return render_template('add_items.html', message="Item added successfully.")
     return render_template('add_items.html')
 
@@ -71,7 +70,7 @@ def purchase():
                          (item['name'], quantity, item['price'], total))
             conn.commit()
         conn.close()
-        return redirect(url_for('index'))
+        return render_template('purchase.html', items=items, message="Purchase successful.")
     conn.close()
     return render_template('purchase.html', items=items)
 
@@ -81,3 +80,24 @@ def transactions():
     transactions = conn.execute('SELECT * FROM transactions').fetchall()
     conn.close()
     return render_template('recent_transactions.html', transactions=transactions)
+
+@app.route('/alerts')
+def alerts():
+    conn = get_db_connection()
+    items = conn.execute('SELECT * FROM items WHERE quantity < 5').fetchall()
+    conn.close()
+    return render_template('alerts.html', items=items)
+
+@app.route('/edit/<int:item_id>', methods=['GET', 'POST'])
+def edit_item(item_id):
+    conn = get_db_connection()
+    item = conn.execute('SELECT * FROM items WHERE id = ?', (item_id,)).fetchone()
+    if request.method == 'POST':
+        quantity = float(request.form['quantity'])
+        price = float(request.form['price'])
+        conn.execute('UPDATE items SET quantity = ?, price = ? WHERE id = ?', (quantity, price, item_id))
+        conn.commit()
+        conn.close()
+        return render_template('edit_item.html', item=item, message="Item updated.")
+    conn.close()
+    return render_template('edit_item.html', item=item)
